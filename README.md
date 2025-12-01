@@ -1,53 +1,53 @@
-### Bioskop MERN sa MySQL
+### 🎬 Cinema MERN with MySQL
 
-- **Backend**: Node.js + Express, Sequelize MySQL, JWT, bcrypt, RBAC, Joi, paginacija/sort  
-- **Frontend**: React (Vite + React Router), stranice: Home, Login, Register, Movies, Movie Details + rezervacije, My Reservations, Admin panel  
-- **Baza**: XAMPP MySQL na 3306, root bez lozinke
+- **Backend**: Node.js + Express, Sequelize MySQL, JWT, bcrypt, RBAC (Role-Based Access Control), Joi, pagination/sorting
+- **Frontend**: React (Vite + React Router), pages: Home, Login, Register, Movies, Movie Details + Reservations, My Reservations, Admin panel
+- **Database**: XAMPP MySQL on 3306, root user without password
 
-### Struktura
+### Structure
 
 ```bash
 server/
   src/
     config/        # env + db (Sequelize)
     middleware/    # auth (JWT), role (RBAC), validate (Joi)
-    models/        # Sequelize modeli (timestamps + underscored)
-    controllers/   # poslovna logika
-    routes/        # Express rute (auth, movies, halls, screenings, reservations)
+    models/        # Sequelize models (timestamps + underscored)
+    controllers/   # business logic
+    routes/        # Express routes (auth, movies, halls, screenings, reservations)
     server.js
   sql/
-    schema.sql     # kreiranje tabela (quoted reserved words npr. halls.`rows`)
-    seed.sql       # osnovni podaci (filmovi, sale, projekcije)
-  .env             # vidi primer ispod
+    schema.sql     # table creation (quoted reserved words npr. halls.`rows`)
+    seed.sql       # initial data (filmovi, sale, projekcije)
+  .env             # see example below
 
 client/
   src/
-    api.js                 # axios instance sa Authorization header-om
+    api.js                 # axios instance with Authorization header
     pages/
       Home.jsx
       Login.jsx
       Register.jsx
       Movies.jsx
-      MovieDetails.jsx     # izbor projekcije + mapa sedista + rezervacija
-      MyReservations.jsx   # rezervacije ulogovanog korisnika
-      Admin.jsx            # tabovi: Filmovi, Sale, Projekcije
+      MovieDetails.jsx     # screening selection + seat map + reservation
+      MyReservations.jsx   # logged-in user's reservations
+      Admin.jsx            # tabs: Movies, Halls, Screenings
       AdminMovies.jsx
       AdminHalls.jsx
       AdminScreenings.jsx
-    main.jsx               # rute + Protected wrapper
+    main.jsx               # routes + Protected wrapper
 ```
 
 
 ### Setup
 
-#### 1) Baza (XAMPP / phpMyAdmin)
-1. Pokreni MySQL u XAMPP-u (port 3306)
-2. U phpMyAdmin kreiraj bazu `bioskop_db`
-3. Importuj redom:
+#### 1) Database (XAMPP / phpMyAdmin)
+1. Start MySQL in XAMPP (port 3306)
+2. In phpMyAdmin, create the database `bioskop_db`
+3. Import in order:
    - `server/sql/schema.sql`
    - `server/sql/seed.sql`
 
-**Admin nalog** se automatski kreira pri startu backend-a:  
+**Admin account** is automatically created when the backend starts:  
 **Email:** `admin@admin.com` &nbsp; **Lozinka:** `admin123`
 
 #### 2) Backend
@@ -65,37 +65,37 @@ npm i
 npm run dev
 ```
 
-### Brzi test
+### Quick Test
 
-1. Uloguj se kao **admin**: `admin@admin.com / admin123`.  
-2. Otvori **/admin**:
-   - Filmovi: dodaj/izmeni/obrisi film
-   - Sale: dodaj salu
-   - Projekcije: napravi projekciju
-3. Otvori **/movies** → film → izaberi projekciju → klikni sedista → Rezervisi  
-4. Otvori **/reservations** – trebalo bi da vidis svoju rezervaciju
+1. Log in as **admin**: `admin@admin.com / admin123`.  
+2. Open **/admin**:
+   - Movies: add/edit/delete movie
+   - Halls: add hall
+   - Screenings: create screening
+3. Open **/movies** → movie → select screening → click seats → Reserve  
+4. Open **/reservations** – you should see your reservation
 
 
-### API rute (sa ulogama)
+### API Routes (with Roles)
 
 ### Auth
 - `POST /api/auth/register` – `{ email, password }`
 - `POST /api/auth/login` – `{ email, password }` → `{ token, user }`
 
-### Filmovi (public list, admin CRUD)
-- `GET /api/movies?page=&limit=&sort=&order=` – paginacija + sort (`id|title|duration_min|rating|createdAt|updatedAt`)
+### Movies (public list, admin CRUD)
+- `GET /api/movies?page=&limit=&sort=&order=` – pagination + sort (`id|title|duration_min|rating|createdAt|updatedAt`)
 - `GET /api/movies/:id`
 - **ADMIN:** `POST /api/movies`, `PUT /api/movies/:id`, `DELETE /api/movies/:id`
 
-### Sale (admin)
-- `GET /api/halls` (lista svih)  
+### Halls (admin)
+- `GET /api/halls` (list of all)  
 - **ADMIN:** `POST /api/halls`, `PUT /api/halls/:id`, `DELETE /api/halls/:id`
 
-### Projekcije
-- `GET /api/screenings?movie_id=` (ako `movie_id` nije prosledjen, vraca sve)  
+### Screenings
+- `GET /api/screenings?movie_id=` (if `movie_id` is not provided, returns all)  
 - **ADMIN:** `POST /api/screenings`, `PUT /api/screenings/:id`, `DELETE /api/screenings/:id`
 
-### Rezervacije (user)
+### Reservations (user)
 - **USER:** `GET /api/reservations/mine`
 - **USER:** `POST /api/reservations`  
   Body:
@@ -105,7 +105,7 @@ npm run dev
     "seats": [ { "row_no": 3, "seat_no": 5 }, { "row_no": 3, "seat_no": 6 } ]
   }
   ```
-  - Ako je neko sediste vec zauzeto, vraca 409 i listu problematicnih sedista:
+  - If a seat is already taken, returns 409 and a list of problematic seats:
     ```json
     { "message":"Seats taken", "seats":[{"row_no":3,"seat_no":5}] }
     ```
