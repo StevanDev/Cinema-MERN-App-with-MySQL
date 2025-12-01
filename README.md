@@ -1,4 +1,4 @@
-### 🎬 Cinema MERN with MySQL
+### 🎬 Cinema MERN App with MySQL
 
 - **Backend**: Node.js + Express, Sequelize MySQL, JWT, bcrypt, RBAC (Role-Based Access Control), Joi, pagination/sorting
 - **Frontend**: React (Vite + React Router), pages: Home, Login, Register, Movies, Movie Details + Reservations, My Reservations, Admin panel
